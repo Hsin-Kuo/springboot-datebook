@@ -24,6 +24,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
+        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
+
+        //檢查註冊的email
+        if (user != null){
+            log.warn("該 email {} 已經被註冊", userRegisterRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        }
+
+        //使用 MD5 生成密碼的雜湊值
+        String hashedPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
+        userRegisterRequest.setPassword(hashedPassword);
+
+        //創建帳號
         return userDao.createUser(userRegisterRequest);
     }
 
