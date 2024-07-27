@@ -44,6 +44,7 @@ public class TodoDaoImpl implements TodoDao {
         return keyHolder.getKey().intValue();
     }
 
+    //只用於create後查詢
     @Override
     public List<Todo> getTodoById(Integer userId, Integer todoId) {
         String sql = "SELECT todo_id, user_id, todo_date, description, checked, hour, last_modified_date " +

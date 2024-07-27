@@ -41,7 +41,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public Map<String, List<Todo>> getTodos(Integer userId, Integer weekFromNow) {
         LocalDate now = LocalDate.now();
-        LocalDate monday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate monday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).minusDays(7*weekFromNow);
 
         Map<String, List<Todo>> week = new HashMap<>();
         for (int i=0; i<7; i++){
