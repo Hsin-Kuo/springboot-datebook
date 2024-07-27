@@ -1,14 +1,16 @@
 package com.hsinkuo.springbootdatebook.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class CreateTodoRequest {
 
-    @NotBlank
-    private Integer userId;
     @NotNull
+    private Integer userId;
+
     private Date todoDate;
     @NotBlank
     private String description;

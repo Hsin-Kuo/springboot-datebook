@@ -23,15 +23,15 @@ public class TodoDaoImpl implements TodoDao {
 
     @Override
     public Integer createTodo(Integer userId, CreateTodoRequest createTodoRequest, Integer hour) {
-        String sql = "INSERT INTO todo(user_id, todo_date, description, checked, time_order, last_modified_date)" +
-                "VALUES (:userId, :todoDate, :description, :checked, :timeOrder, :lastModifiedDate";
+        String sql = "INSERT INTO todo(user_id, todo_date, description, checked, hour, last_modified_date) " +
+                "VALUES (:userId, :todoDate, :description, :checked, :hour, :lastModifiedDate)";
 
         Map<String, Object> map = new HashMap<>();
         map.put("userId", createTodoRequest.getUserId());
         map.put("todoDate", createTodoRequest.getTodoDate());
         map.put("description", createTodoRequest.getDescription());
         map.put("checked", createTodoRequest.getChecked());
-        map.put("timeOrder", hour);
+        map.put("hour", hour);
 
         Date now = new Date();
         map.put("lastModifiedDate", now);
@@ -46,8 +46,8 @@ public class TodoDaoImpl implements TodoDao {
 
     @Override
     public List<Todo> getTodoById(Integer todoId) {
-        String sql = "todo_id, user_id, todo_date, description, checked, time_order, last_modified_date" +
-                "FROM todo WHERE user_id = :todoId";
+        String sql = "SELECT todo_id, user_id, todo_date, description, checked, hour, last_modified_date " +
+                "FROM todo WHERE todo_id = :todoId";
         Map<String, Object> map = new HashMap<>();
         map.put("todoId", todoId);
 
