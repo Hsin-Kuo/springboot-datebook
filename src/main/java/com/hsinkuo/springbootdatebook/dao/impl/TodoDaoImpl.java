@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,19 +40,30 @@ public class TodoDaoImpl implements TodoDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
-        int todoId = keyHolder.getKey().intValue();
 
-        return todoId;
+        return keyHolder.getKey().intValue();
     }
 
     @Override
-    public List<Todo> getTodoById(Integer todoId) {
+    public List<Todo> getTodoById(Integer userId, Integer todoId) {
         String sql = "SELECT todo_id, user_id, todo_date, description, checked, hour, last_modified_date " +
-                "FROM todo WHERE todo_id = :todoId";
+                "FROM todo WHERE user_id = :userId AND todo_id = :todoId";
         Map<String, Object> map = new HashMap<>();
         map.put("todoId", todoId);
+        map.put("userId", userId);
 
         List<Todo> todoList = namedParameterJdbcTemplate.query(sql, map, new TodoRowMapper());
         return todoList;
+    }
+
+    @Override
+    public List<Todo> getTodosByDate(Integer userId, LocalDate date) {
+        String sql = "SELECT todo_id, user_id, todo_date, description, checked, hour, last_modified_date " +
+                "FROM todo WHERE user_id = :userId AND DATE(todo_date) = :todoDate ORDER BY hour";
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("todoDate", date);
+
+        return namedParameterJdbcTemplate.query(sql, map, new TodoRowMapper());
     }
 }

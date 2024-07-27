@@ -3,10 +3,10 @@ package com.hsinkuo.springbootdatebook.controller;
 import com.hsinkuo.springbootdatebook.dto.CreateTodoRequest;
 import com.hsinkuo.springbootdatebook.model.Todo;
 import com.hsinkuo.springbootdatebook.service.TodoService;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -30,9 +30,12 @@ public class TodoController {
 
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> test(){
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<?> getTodos(@PathVariable Integer userId,
+                                      @RequestParam(defaultValue = "0")@Min(0) Integer weekFromNow){
+        Map<String, List<Todo>> todos = todoService.getTodos(userId,weekFromNow);
+
+        return ResponseEntity.status(HttpStatus.OK).body(todos);
     }
 
 }

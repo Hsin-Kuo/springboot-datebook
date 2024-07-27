@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
+import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +31,24 @@ public class TodoServiceImpl implements TodoService {
         String day = localDate.getDayOfWeek().toString();
         Integer todoId =  todoDao.createTodo(userId, createTodoRequest, hour);
 
-        List<Todo> todos = todoDao.getTodoById(todoId);
+        List<Todo> todos = todoDao.getTodoById(userId, todoId);
 
         Map<String, List<Todo>> week = new HashMap<>();
         week.put(day, todos);
         return week;
     }
 
+    @Override
+    public Map<String, List<Todo>> getTodos(Integer userId, Integer weekFromNow) {
+        LocalDate now = LocalDate.now();
+        LocalDate monday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
+        Map<String, List<Todo>> week = new HashMap<>();
+        for (int i=0; i<7; i++){
+            List<Todo> todos = todoDao.getTodosByDate(userId, monday.plusDays(i));
+            week.put(monday.plusDays(i).getDayOfWeek().toString(), todos);
+        }
+
+        return week;
+    }
 }
