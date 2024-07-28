@@ -32,7 +32,7 @@ public class TodoController {
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<?> getTodos(@PathVariable Integer userId,
-                                      @RequestParam(defaultValue = "0")@Min(0) Integer weekFromNow){
+                                      @RequestParam(defaultValue = "0") Integer weekFromNow){
         Map<String, List<Todo>> todos = todoService.getTodos(userId,weekFromNow);
 
         return ResponseEntity.status(HttpStatus.OK).body(todos);

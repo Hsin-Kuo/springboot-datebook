@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class TodoServiceImpl implements TodoService {
         LocalDate now = LocalDate.now();
         LocalDate monday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).minusDays(7*weekFromNow);
 
-        Map<String, List<Todo>> week = new HashMap<>();
+        Map<String, List<Todo>> week = new LinkedHashMap<>();
         for (int i=0; i<7; i++){
             List<Todo> todos = todoDao.getTodosByDate(userId, monday.plusDays(i));
             week.put(monday.plusDays(i).getDayOfWeek().toString(), todos);
