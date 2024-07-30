@@ -12,10 +12,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Component
 public class TodoDaoImpl implements TodoDao {
@@ -23,7 +21,7 @@ public class TodoDaoImpl implements TodoDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public Integer createTodo(Integer userId, CreateTodoRequest createTodoRequest, Integer hour) {
+    public Integer createTodo(Integer userId, CreateTodoRequest createTodoRequest) {
         String sql = "INSERT INTO todo(user_id, todo_date, description, checked, hour, last_modified_date) " +
                 "VALUES (:userId, :todoDate, :description, :checked, :hour, :lastModifiedDate)";
 
@@ -32,7 +30,7 @@ public class TodoDaoImpl implements TodoDao {
         map.put("todoDate", createTodoRequest.getTodoDate());
         map.put("description", createTodoRequest.getDescription());
         map.put("checked", createTodoRequest.getChecked());
-        map.put("hour", hour);
+        map.put("hour", createTodoRequest.getHour());
 
         Date now = new Date();
         map.put("lastModifiedDate", now);
@@ -42,6 +40,23 @@ public class TodoDaoImpl implements TodoDao {
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
 
         return keyHolder.getKey().intValue();
+    }
+
+    @Override
+    public void updateTodo(Integer todoId, CreateTodoRequest createTodoRequest) {
+        String sql = "UPDATE todo SET description = :description, checked = :checked, last_modified_date = :lastModifiedDate " +
+                "WHERE todo_id = :todoId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("todoId", todoId);
+        map.put("description", createTodoRequest.getDescription());
+        map.put("checked", createTodoRequest.getChecked());
+
+        LocalDateTime now = LocalDateTime.now();
+        map.put("lastModifiedDate", now);
+
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map));
+
     }
 
     //只用於create後查詢
@@ -57,6 +72,8 @@ public class TodoDaoImpl implements TodoDao {
         return todoList;
     }
 
+
+
     @Override
     public List<Todo> getTodosByDate(Integer userId, LocalDate date) {
         String sql = "SELECT todo_id, user_id, todo_date, description, checked, hour, last_modified_date " +
@@ -66,5 +83,17 @@ public class TodoDaoImpl implements TodoDao {
         map.put("todoDate", date);
 
         return namedParameterJdbcTemplate.query(sql, map, new TodoRowMapper());
+    }
+
+    @Override
+    public Integer getTodoIdBy(Integer userId, LocalDate date, Integer hour) {
+        String sql = "SELECT todo_id " +
+                "FROM todo WHERE user_id = :userId AND DATE(todo_date) = :todoDate AND hour = :hour";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", userId);
+        params.addValue("todoDate", date);
+        params.addValue("hour", hour);
+
+        return namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
     }
 }

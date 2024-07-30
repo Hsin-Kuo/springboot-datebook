@@ -17,7 +17,7 @@ public class TodoRowMapper implements RowMapper<Todo> {
         todo.setDescription(resultSet.getString("description"));
         todo.setChecked(resultSet.getBoolean("checked"));
         todo.setHour((resultSet.getInt("hour")));
-        todo.setLast_modified_date(resultSet.getDate("last_modified_date"));
+        todo.setLast_modified_date(resultSet.getTimestamp("last_modified_date"));
 
         return todo;
     }

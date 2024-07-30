@@ -37,8 +37,26 @@ public class TodoController {
             log.warn("尚未登入");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }else {
-            Map<String, List<Todo>> todos = todoService.createTodo(userId, createTodoRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(todos);
+            List<Todo> todo = todoService.createTodo(userId, createTodoRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(todo);
+
+        }
+
+    }
+
+    @PutMapping("/users/{userId}/todo")
+    public ResponseEntity<?> updateTodo(@PathVariable Integer userId,
+                                        @RequestBody @Valid CreateTodoRequest createTodoRequest,
+                                        HttpSession session){
+
+        if(session.getAttribute("user") == null){
+            log.warn("尚未登入");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }else {
+
+            List<Todo> todo = todoService.updateTodo(userId, createTodoRequest);
+            log.warn("更新資料");
+            return ResponseEntity.status(HttpStatus.OK).body(todo);
 
         }
 

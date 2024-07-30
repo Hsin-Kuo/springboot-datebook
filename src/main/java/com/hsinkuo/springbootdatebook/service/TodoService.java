@@ -8,7 +8,10 @@ import java.util.Map;
 
 public interface TodoService {
 
-    Map<String, List<Todo>> createTodo(Integer userId, CreateTodoRequest createTodoRequest);
+    List<Todo> createTodo(Integer userId, CreateTodoRequest createTodoRequest);
+    List<Todo> updateTodo(Integer userId, CreateTodoRequest createTodoRequest);
+
+
 
     Map<Integer, List<Todo>> getTodos(Integer userId, Integer weekFromNow);
 }

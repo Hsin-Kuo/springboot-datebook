@@ -21,21 +21,28 @@ public class TodoServiceImpl implements TodoService {
     private TodoDao todoDao;
 
     @Override
-    public Map<String, List<Todo>> createTodo(Integer userId, CreateTodoRequest createTodoRequest) {
+    public List<Todo> createTodo(Integer userId, CreateTodoRequest createTodoRequest) {
 
 //        Instant instant = createTodoRequest.getTodoDate();
 //        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Asia/Taipei"));
-        LocalDate localDate = createTodoRequest.getTodoDate();
 
-        Integer hour = createTodoRequest.getHour();
-        String day = localDate.getDayOfWeek().toString();
-        Integer todoId =  todoDao.createTodo(userId, createTodoRequest, hour);
+        Integer todoId =  todoDao.createTodo(userId, createTodoRequest);
 
-        List<Todo> todos = todoDao.getTodoById(userId, todoId);
+        List<Todo> todo = todoDao.getTodoById(userId, todoId);
 
-        Map<String, List<Todo>> week = new HashMap<>();
-        week.put(day, todos);
-        return week;
+        return todo;
+
+//        Map<String, List<Todo>> week = new HashMap<>();
+//        week.put(day, todos);
+//        return week;
+    }
+
+    @Override
+    public List<Todo> updateTodo(Integer userId, CreateTodoRequest createTodoRequest) {
+        Integer todoId =  todoDao.getTodoIdBy(userId, createTodoRequest.getTodoDate(), createTodoRequest.getHour());
+        todoDao.updateTodo(todoId, createTodoRequest);
+        List<Todo> todo = todoDao.getTodoById(userId, todoId);
+        return todo;
     }
 
     @Override
