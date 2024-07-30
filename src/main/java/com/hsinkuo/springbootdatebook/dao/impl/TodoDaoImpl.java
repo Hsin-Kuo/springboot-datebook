@@ -28,7 +28,7 @@ public class TodoDaoImpl implements TodoDao {
                 "VALUES (:userId, :todoDate, :description, :checked, :hour, :lastModifiedDate)";
 
         Map<String, Object> map = new HashMap<>();
-        map.put("userId", createTodoRequest.getUserId());
+        map.put("userId", userId);
         map.put("todoDate", createTodoRequest.getTodoDate());
         map.put("description", createTodoRequest.getDescription());
         map.put("checked", createTodoRequest.getChecked());

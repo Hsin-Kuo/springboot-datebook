@@ -23,12 +23,11 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public Map<String, List<Todo>> createTodo(Integer userId, CreateTodoRequest createTodoRequest) {
 
-        Instant instant = createTodoRequest.getTodoDate().toInstant();
-        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Asia/Taipei"));
-        LocalDate localDate = zonedDateTime.toLocalDate();
-        LocalTime localTime = zonedDateTime.toLocalTime();
+//        Instant instant = createTodoRequest.getTodoDate();
+//        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Asia/Taipei"));
+        LocalDate localDate = createTodoRequest.getTodoDate();
 
-        Integer hour = localTime.getHour();
+        Integer hour = createTodoRequest.getHour();
         String day = localDate.getDayOfWeek().toString();
         Integer todoId =  todoDao.createTodo(userId, createTodoRequest, hour);
 
@@ -40,14 +39,14 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public Map<String, List<Todo>> getTodos(Integer userId, Integer weekFromNow) {
+    public Map<Integer, List<Todo>> getTodos(Integer userId, Integer weekFromNow) {
         LocalDate now = LocalDate.now();
         LocalDate monday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).minusDays(7*weekFromNow);
 
-        Map<String, List<Todo>> week = new LinkedHashMap<>();
+        Map<Integer, List<Todo>> week = new LinkedHashMap<>();
         for (int i=0; i<7; i++){
             List<Todo> todos = todoDao.getTodosByDate(userId, monday.plusDays(i));
-            week.put(monday.plusDays(i).getDayOfWeek().toString(), todos);
+            week.put(i, todos);
         }
 
         return week;

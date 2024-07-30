@@ -1,34 +1,35 @@
 package com.hsinkuo.springbootdatebook.dto;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class CreateTodoRequest {
 
-    @NotNull
-    private Integer userId;
+    @NotBlank
+    private String email;
 
-    private Date todoDate;
+    private LocalDate todoDate;
+    private Integer hour;
     @NotBlank
     private String description;
     private Boolean checked;
 
-    public Integer getUserId() {
-        return userId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public Date getTodoDate() {
+    public LocalDate getTodoDate() {
         return todoDate;
     }
 
-    public void setTodoDate(Date todoDate) {
+    public void setTodoDate(LocalDate todoDate) {
         this.todoDate = todoDate;
     }
 
@@ -46,5 +47,13 @@ public class CreateTodoRequest {
 
     public void setChecked(Boolean checked) {
         this.checked = checked;
+    }
+
+    public Integer getHour() {
+        return hour;
+    }
+
+    public void setHour(Integer hour) {
+        this.hour = hour;
     }
 }

@@ -10,5 +10,5 @@ public interface TodoService {
 
     Map<String, List<Todo>> createTodo(Integer userId, CreateTodoRequest createTodoRequest);
 
-    Map<String, List<Todo>> getTodos(Integer userId, Integer weekFromNow);
+    Map<Integer, List<Todo>> getTodos(Integer userId, Integer weekFromNow);
 }
