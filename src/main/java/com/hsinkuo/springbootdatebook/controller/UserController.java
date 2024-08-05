@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
@@ -40,7 +37,14 @@ public class UserController {
 
         User user = userService.login(userLoginRequest);
         session.setAttribute("user", user);
-        log.warn("登入");
+        log.info("登入");
         return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @DeleteMapping("/users/logout")
+    public ResponseEntity<User> logout(HttpSession session){
+        session.removeAttribute("user");
+        log.info("登出");
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
