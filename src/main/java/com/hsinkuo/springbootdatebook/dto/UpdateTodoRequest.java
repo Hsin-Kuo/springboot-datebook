@@ -1,6 +1,7 @@
 package com.hsinkuo.springbootdatebook.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -9,7 +10,7 @@ public class UpdateTodoRequest {
     private String email;
     private LocalDate todoDate;
     private Integer hour;
-    @NotBlank
+    @NotNull
     private String description;
     private Boolean checked;
 

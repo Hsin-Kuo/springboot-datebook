@@ -1,6 +1,7 @@
 package com.hsinkuo.springbootdatebook.controller;
 
 import com.hsinkuo.springbootdatebook.dto.CreateTodoRequest;
+import com.hsinkuo.springbootdatebook.dto.UpdateTodoRequest;
 import com.hsinkuo.springbootdatebook.model.Todo;
 import com.hsinkuo.springbootdatebook.service.TodoService;
 import com.hsinkuo.springbootdatebook.service.impl.UserServiceImpl;
@@ -46,7 +47,7 @@ public class TodoController {
 
     @PutMapping("/users/{userId}/todo")
     public ResponseEntity<?> updateTodo(@PathVariable Integer userId,
-                                        @RequestBody @Valid CreateTodoRequest createTodoRequest,
+                                        @RequestBody @Valid UpdateTodoRequest updateTodoRequest,
                                         HttpSession session){
 
         if(session.getAttribute("user") == null){
@@ -54,7 +55,7 @@ public class TodoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }else {
 
-            List<Todo> todo = todoService.updateTodo(userId, createTodoRequest);
+            List<Todo> todo = todoService.updateTodo(userId, updateTodoRequest);
             log.warn("更新資料");
             return ResponseEntity.status(HttpStatus.OK).body(todo);
 

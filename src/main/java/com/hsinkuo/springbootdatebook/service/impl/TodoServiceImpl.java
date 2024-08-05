@@ -2,6 +2,7 @@ package com.hsinkuo.springbootdatebook.service.impl;
 
 import com.hsinkuo.springbootdatebook.dao.TodoDao;
 import com.hsinkuo.springbootdatebook.dto.CreateTodoRequest;
+import com.hsinkuo.springbootdatebook.dto.UpdateTodoRequest;
 import com.hsinkuo.springbootdatebook.model.Todo;
 import com.hsinkuo.springbootdatebook.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<Todo> updateTodo(Integer userId, CreateTodoRequest createTodoRequest) {
-        Integer todoId =  todoDao.getTodoIdBy(userId, createTodoRequest.getTodoDate(), createTodoRequest.getHour());
-        todoDao.updateTodo(todoId, createTodoRequest);
+    public List<Todo> updateTodo(Integer userId, UpdateTodoRequest updateTodoRequest) {
+        Integer todoId =  todoDao.getTodoIdBy(userId, updateTodoRequest.getTodoDate(), updateTodoRequest.getHour());
+        todoDao.updateTodo(todoId, updateTodoRequest);
         List<Todo> todo = todoDao.getTodoById(userId, todoId);
         return todo;
     }

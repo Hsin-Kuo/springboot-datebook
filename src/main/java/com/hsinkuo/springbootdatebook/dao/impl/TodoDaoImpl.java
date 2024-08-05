@@ -2,6 +2,7 @@ package com.hsinkuo.springbootdatebook.dao.impl;
 
 import com.hsinkuo.springbootdatebook.dao.TodoDao;
 import com.hsinkuo.springbootdatebook.dto.CreateTodoRequest;
+import com.hsinkuo.springbootdatebook.dto.UpdateTodoRequest;
 import com.hsinkuo.springbootdatebook.model.Todo;
 import com.hsinkuo.springbootdatebook.rowmapper.TodoRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +44,14 @@ public class TodoDaoImpl implements TodoDao {
     }
 
     @Override
-    public void updateTodo(Integer todoId, CreateTodoRequest createTodoRequest) {
+    public void updateTodo(Integer todoId, UpdateTodoRequest updateTodoRequest) {
         String sql = "UPDATE todo SET description = :description, checked = :checked, last_modified_date = :lastModifiedDate " +
                 "WHERE todo_id = :todoId";
 
         Map<String, Object> map = new HashMap<>();
         map.put("todoId", todoId);
-        map.put("description", createTodoRequest.getDescription());
-        map.put("checked", createTodoRequest.getChecked());
+        map.put("description", updateTodoRequest.getDescription());
+        map.put("checked", updateTodoRequest.getChecked());
 
         LocalDateTime now = LocalDateTime.now();
         map.put("lastModifiedDate", now);
