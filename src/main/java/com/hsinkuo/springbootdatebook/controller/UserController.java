@@ -11,17 +11,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
-@RestController
+@Controller
 @CrossOrigin(origins = "http://localhost:8082")
 public class UserController {
     @Autowired
     private UserService userService;
     private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    @GetMapping("/home")
+    public String index() {
+        return "index";
+    }
     @PostMapping("/users/register")
     public ResponseEntity<User> register(@RequestBody @Valid UserRegisterRequest userRegisterRequest){
         Integer userId = userService.register(userRegisterRequest);

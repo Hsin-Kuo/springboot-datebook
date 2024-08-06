@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One&amp;family=Zen+Kurenaido&amp;display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.global.prod.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Insert title here</title>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .frame {
+            border: 1px solid #000;
+        }
+
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        tr {
+            display: block;
+            float: left;
+        }
+
+        th, td {
+            padding: 5px;
+            display: block;
+            height: 35px;
+            border-bottom: 1px dotted #ddd;
+        }
+
+        .time th, .time td {
+            border-right: 1px dotted #ddd;
+            width: 80px;
+            font-size: 12px;
+            font-weight: lighter;
+            color: #555;
+        }
+        .time th p, .time td p {
+            padding-top: 25px;
+        }
+
+        .week th, .week td {
+            width: 140px;
+        }
+        .week td {
+            font-family: "Zen Kurenaido", "Klee One";
+        }
+        .week .date {
+            font-size: 12px;
+            color: #aaa;
+            font-weight: lighter;
+        }
+        .week form {
+            margin-top: 3px;
+            vertical-align: middle;
+        }
+        .week form input {
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .week form .time {
+            font-size: 12px;
+        }
+        .week form .editTime {
+            width: 30px;
+        }
+        .week form .edit {
+            display: inline;
+            width: 70px;
+        }
+        .week form .content {
+            margin-left: 5px;
+            display: inline-block;
+            height: 20px;
+            width: 70px;
+            vertical-align: baseline;
+        }
+        .popup-form {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        .btn {
+            text-align: center;
+        }
+        .btn button {
+            font-family: "Zen Kurenaido", "Klee One";
+            padding: 4px 8px;
+            margin: 30px 10px;
+            border: 1px dashed #000;
+            border-radius: 5px;
+        }
+        .loginForm {
+            text-align: center;
+            padding: 90px;
+
+        }
+    </style>
+</head>
+
+<body>
+
+<main id="app">
+    <div class="frame" @click.self="cancelEdit" v-if="isLogin">
+        <table>
+            <tr class="time">
+                <th>&nbsp</th>
+                <td>
+                    <p>0800</p>
+                </td>
+                <td>
+                    <p>0900</p>
+                </td>
+                <td>
+                    <p>1000</p>
+                </td>
+                <td>
+                    <p>1100</p>
+                </td>
+                <td>
+                    <p>1200</p>
+                </td>
+                <td>
+                    <p>1300</p>
+                </td>
+                <td>
+                    <p>1400</p>
+                </td>
+                <td>
+                    <p>1500</p>
+                </td>
+                <td>
+                    <p>1600</p>
+                </td>
+                <td>
+                    <p>1700</p>
+                </td>
+                <td>
+                    <p>1800</p>
+                </td>
+                <td>
+                    <p>1900</p>
+                </td>
+                <td>
+                    <p>2000</p>
+                </td>
+                <td>
+                    <p>2100</p>
+                </td>
+                <td>
+                    <p>2200</p>
+                </td>
+                <td>
+                    <p>2300</p>
+                </td>
+            </tr>
+            <tr class="week" v-for="(item, key, index) in week" @click.capture="dayIndex = index; isPopupVisible = true">
+                <th>
+                    <p>{{dayOfWeek[index]}}</p>
+                    <p class="date">{{weekDates[index]}}</p>
+                </th>
+                <td v-for="(todo, index) in item" @click="timeIndex = (index+8)">
+                    <input v-if="todo.description != '' && todo !=''" type="checkbox" v-model="todo.checked" @change="updateData(email, week[dayIndex][timeIndex-8].description)" />
+                    <span class="content" v-model="todo.description" v-if="!todo.edit">{{todo.description}}</span>
+                </td>
+            </tr>
+        </table>
+        <div class="btn">
+            <button @click="previous">前一週</button>
+            <button @click="next">下一週</button>
+            <br>
+            <span>帳號： {{email}}</span>
+            <button @click="logout">登出</button>
+        </div>
+        <!--<div>{{dayIndex}} : {{timeIndex}} </div> -->
+
+
+
+        <div class="popup-form" v-if="isPopupVisible">
+            <div class="overlay" @click="hidePopup"></div>
+            <div class="form-container">
+                <form>
+                    <!--
+                        <label for="time">時間</label>
+                        <input type="text" v-model="timeIndex" id="time" required style="width: 15px;">
+                        -->
+                    <span>{{weekDates[dayIndex]}} {{timeIndex}}:00</span>
+                    <br>
+                    <label>行程</label>
+                    <input type="text" @keydown.enter.prevent="updateData(email, week[dayIndex][timeIndex-8].description)" v-if="week[dayIndex][timeIndex-8] != ''" v-model="week[dayIndex][timeIndex-8].description">
+                    <input type="text" @keydown.enter.prevent="updateData(email, newDescription)" v-if="week[dayIndex][timeIndex-8] == ''" v-model="newDescription">
+
+                </form>
+                <!--  <button @click="updateData">Submit</button> -->
+                <button @click="isPopupVisible = false">Close</button>
+            </div>
+        </div>
+
+    </div>
+    <form @submit.prevent="submitForm" v-if="!isLogin" class="loginForm">
+        <div>
+            <label>帳號</label>
+            <input type="text" v-model="email" required>
+            <br>
+            <label for="password">密碼</label>
+            <input type="password" v-model="password" id="password" required>
+        </div>
+        <button @click="register">註冊</button>
+        <button @click="login">登入</button>
+
+    </form>
+</main>
+
+<script>
+
+    const apiClient = axios.create({
+        baseURL: 'http://localhost:8080',
+        withCredentials: true
+    });
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                week: [],
+                dayIndex: 0,
+                dayOfWeek: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                weekFromNow:　0,
+                weekDates: [],
+                timeIndex: 0,
+                isPopupVisible: false,
+                email: 'test1@gmail.com',
+                password: '1234',
+                isLogin: false,
+                user: null,
+                newDescription: ''
+            };
+        },
+        methods: {
+            updateData(email, description){
+                const updateRequest = {
+                    email: email,
+                    todoDate: this.weekDates[this.dayIndex],
+                    hour: this.timeIndex-8,
+                    description: description,
+                    checked: false
+                };
+                if(this.week[this.dayIndex][this.timeIndex-8] == ''){
+                    apiClient.post('http://localhost:8080/users/'+this.user.userId+'/todo', updateRequest)
+                        .then(response => {
+                            //alert('JSON = ' + JSON.stringify(response.data));
+                            this.week[this.dayIndex][this.timeIndex-8] = response.data[0];
+                            console.log(response.data);
+                            this.isPopupVisible = false;
+                            this.newDescription = '';
+                        })
+                        .catch(error => {
+                            alert('error: ' + error);
+                            console.error('Error:', error);
+                        });
+                }else{
+                    updateRequest.checked = this.week[this.dayIndex][this.timeIndex-8].checked;
+                    apiClient.put('http://localhost:8080/users/'+this.user.userId+'/todo', updateRequest)
+                        .then(response => {
+                            //alert('JSON = ' + JSON.stringify(response.data));
+                            this.week[this.dayIndex][this.timeIndex-8] = response.data[0];
+                            console.log(response.data);
+                            this.isPopupVisible = false;
+                            this.newDescription = '';
+                        })
+                        .catch(error => {
+                            alert('error: ' + error);
+                            console.error('Error:', error);
+                        });
+                }
+
+
+
+            },
+            login(){
+                const userLoginRequest = {
+                    email: this.email,
+                    password: this.password
+                };
+
+                apiClient.post('http://localhost:8080/users/login', userLoginRequest)
+                    .then(response => {
+                        //alert('JSON = ' + JSON.stringify(response.data));
+                        this.user = response.data;
+                        alert('登入成功');
+                        this.isLogin = true;
+                        this.fetchProducts();
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        alert('帳號密碼錯誤');
+                        this.isLogin = false;
+                        console.error('Error:', error);
+                    });
+            },
+            logout(){
+
+                apiClient.delete('http://localhost:8080/users/logout')
+                    .then(response => {
+                        this.isLogin = false;
+                        alert('登出成功');
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        alert('錯誤');
+                        this.isLogin = false;
+                        console.error('Error:', error);
+                    });
+            },
+            register(){
+                const userRegisterRequest = {
+                    email: this.email,
+                    password: this.password
+                };
+                apiClient.post('http://localhost:8080/users/register', userRegisterRequest)
+                    .then(response => {
+                        alert('註冊成功');
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        alert('錯誤');
+                        console.error('Error:', error);
+                    });
+            },
+            fetchProducts() {
+                axios.get('http://localhost:8080/users/'+this.user.userId+'?weekFromNow='+this.weekFromNow)
+                    .then(response => {
+                        //alert('JSON = ' + JSON.stringify(response.data));
+                        this.week = response.data;
+                        this.ifGet = true;
+                        this.adjustWeek();
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        //alert('error: ' + error);
+                        console.error('Error:', error);
+                    });
+            },
+
+            adjustWeek(){
+                const week = JSON.parse(JSON.stringify(this.week));  // 深複製this.week
+                const newWeek = {
+                    "0": Array(16).fill(""),
+                    "1": Array(16).fill(""),
+                    "2": Array(16).fill(""),
+                    "3": Array(16).fill(""),
+                    "4": Array(16).fill(""),
+                    "5": Array(16).fill(''),
+                    "6": Array(16).fill("")
+                };
+
+                for (let i = 0; i < 7; i++) {
+                    const dayIndex = String(i);
+                    for (let task of week[dayIndex]) {
+                        const hour = task.hour;
+                        if (hour < 16) {
+                            newWeek[dayIndex][hour] = task;
+                        }
+                    }
+                }
+                this.week = newWeek;
+            },
+
+
+            previous() {
+                this.weekFromNow++;
+                axios.get('http://localhost:8080/users/'+this.user.userId+'?weekFromNow='+this.weekFromNow)
+                    .then(response => {
+                        this.week = response.data;
+                        this.getWeekDates();
+                        this.adjustWeek();
+                        //alert('week = ' + JSON.stringify(this.week));
+                    })
+                    .catch(error => {
+                        console.error('Error fetching todos:', error);
+                    });
+            },
+            next() {
+                this.weekFromNow--;
+                axios.get('http://localhost:8080/users/'+this.user.userId+'?weekFromNow='+this.weekFromNow)
+                    .then(response => {
+                        this.week = response.data;
+                        this.getWeekDates();
+                        this.adjustWeek();
+                        //alert('week = ' + JSON.stringify(this.week));
+                    })
+                    .catch(error => {
+                        console.error('Error fetching todos:', error);
+                    });
+            },
+            getWeekDates() {
+                const today = new Date();
+                const dayOfWeek = today.getDay(); // 0 (Sun) - 6 (Sat)
+                const monday = new Date();
+                monday.setDate(today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Calculate Monday
+                const dates = [];
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(monday);
+                    date.setDate(monday.getDate() - this.weekFromNow*7 + i);
+                    dates.push(date.toISOString().split('T')[0]); // Format as YYYY-MM-DD
+                }
+
+                this.weekDates = dates;
+            }
+        },
+        mounted() {
+            // const dataRef = ref(database, "/testR");
+            this.getWeekDates();
+            this.fetchProducts();
+
+        }
+    });
+
+    app.mount('#app');
+
+</script>
+</body>
+</html>
